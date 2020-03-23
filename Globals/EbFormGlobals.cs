@@ -9,10 +9,12 @@ namespace ExpressBase.CoreBase.Globals
     {
         public dynamic form { get; private set; }
 
+        public dynamic sourceform { get; private set; }
+
         public FG_User user { get; private set; }
 
         public FG_System system { get; private set; }
-
+        
         public FG_Root(FG_WebForm fG_WebForm)
         {
             this.form = fG_WebForm;
@@ -24,9 +26,12 @@ namespace ExpressBase.CoreBase.Globals
             this.user = fG_User;
         }
 
-        public FG_Root(FG_WebForm fG_WebForm, FG_User fG_User, FG_System fG_System)
+        public FG_Root(FG_WebForm fG_WebForm, FG_User fG_User, FG_System fG_System, int mode)
         {
-            this.form = fG_WebForm;
+            if (mode == 1)
+                this.sourceform = fG_WebForm;
+            else
+                this.form = fG_WebForm;
             this.user = fG_User;
             this.system = fG_System;
         }
@@ -138,6 +143,65 @@ namespace ExpressBase.CoreBase.Globals
             this.Name = name;
             this.Rows = rows;
         }
+
+        public Double Sum(string cname)
+        {
+            Double s = 0;
+            foreach (FG_Row Row in this.Rows)
+            {
+                if (Row[cname] != null)
+                {
+                    double.TryParse(Convert.ToString(Row[cname].getValue()), out double e);
+                    s += e;
+                }
+            }
+            return s;
+        }
+        public Double Avg(string cname)
+        {
+            Double s = 0;
+            foreach (FG_Row Row in this.Rows)
+            {
+                if (Row[cname] != null)
+                {
+                    double.TryParse(Convert.ToString(Row[cname].getValue()), out double e);
+                    s += e;
+                }
+            }
+            return this.Rows.Count > 0 ? s / this.Rows.Count : s;
+        }
+        public Double Min(string cname)
+        {
+            Double s = 0;
+            if (this.Rows.Count > 0)
+                double.TryParse(Convert.ToString(this.Rows[0][cname].getValue()), out s);
+            foreach (FG_Row Row in this.Rows)
+            {
+                if (Row[cname] != null)
+                {
+                    double.TryParse(Convert.ToString(Row[cname].getValue()), out double e);
+                    if (e < s)
+                        s = e;
+                }
+            }
+            return s;
+        }
+        public Double Max(string cname)
+        {
+            Double s = 0; 
+            if (this.Rows.Count > 0)
+                double.TryParse(Convert.ToString(this.Rows[0][cname].getValue()), out s);
+            foreach (FG_Row Row in this.Rows)
+            {
+                if (Row[cname] != null)
+                {
+                    double.TryParse(Convert.ToString(Row[cname].getValue()), out double e);
+                    if (e > s)
+                        s = e;
+                }
+            }
+            return s;
+        }
     }
 
     public class FG_Review
@@ -214,7 +278,7 @@ namespace ExpressBase.CoreBase.Globals
             {
                 FG_Control ctrl = this.Controls.Find(e => e.Name.Equals(name));
                 if (ctrl == null)
-                    Console.WriteLine("Null ref for control - form globals");
+                    Console.WriteLine($"Null ref in form globals. Name = {name}, CtrlCount = {this.Controls.Count}, RowId = {this.RowId}");
                 return ctrl;
             }
         }
