@@ -23,7 +23,7 @@ namespace ExpressBase.CoreBase.Globals
             this.form = fG_WebForm;
             this.user = fG_User;
         }
-        
+
         public FG_Root(FG_WebForm fG_WebForm, FG_User fG_User, FG_System fG_System)
         {
             this.form = fG_WebForm;
@@ -55,7 +55,7 @@ namespace ExpressBase.CoreBase.Globals
     {
         public List<FG_Notification> Notifications { get; set; }
 
-        public FG_System() 
+        public FG_System()
         {
             this.Notifications = new List<FG_Notification>();
         }
@@ -64,10 +64,15 @@ namespace ExpressBase.CoreBase.Globals
         {
             this.Notifications.Add(new FG_Notification { UserId = userId, Title = title, NotifyBy = FG_NotifyBy.UserId });
         }
-        
-        public void sendNotificationByRoleName(string roleName, string title = null)
+
+        public void sendNotificationByRoleIds(List<int> roleIds, string title = null)
         {
-            this.Notifications.Add(new FG_Notification { RoleName = roleName, Title = title, NotifyBy = FG_NotifyBy.RoleName });
+            this.Notifications.Add(new FG_Notification { RoleIds = roleIds, Title = title, NotifyBy = FG_NotifyBy.RoleIds });
+        }
+        
+        public void sendNotificationByUserGroupIds(List<int> ugIds, string title = null)
+        {
+            this.Notifications.Add(new FG_Notification { UserGroupIds = ugIds, Title = title, NotifyBy = FG_NotifyBy.UserGroupIds });
         }
     }
 
@@ -75,7 +80,9 @@ namespace ExpressBase.CoreBase.Globals
     {
         public int UserId { get; set; }
 
-        public string RoleName { get; set; }
+        public List<int> RoleIds { get; set; }
+
+        public List<int> UserGroupIds { get; set; }
 
         public string Title { get; set; }
 
@@ -85,10 +92,8 @@ namespace ExpressBase.CoreBase.Globals
     public enum FG_NotifyBy
     {
         UserId = 1,
-        UserIds = 2,
-        RoleName = 3,
-        RoleNames = 4,
-        UserGroupName = 5
+        RoleIds = 2,
+        UserGroupIds = 3
     }
 
     public class FG_WebForm : DynamicObject
@@ -147,7 +152,7 @@ namespace ExpressBase.CoreBase.Globals
         {
             this.stages = stages;
             this.currentStage = currentStage;
-        }        
+        }
 
         public void complete()
         {
@@ -161,9 +166,7 @@ namespace ExpressBase.CoreBase.Globals
 
         public void setCurrentStageDataEditable()
         {
-            //EbReviewStage curS = (EbReviewStage)this.CtrlObj.FormStages.Find(e => (e as EbReviewStage).Name == this.currentStage.name);
-            //if (curS != null)
-            //    curS.IsFormEditable = true;
+            
         }
 
     }
@@ -193,7 +196,7 @@ namespace ExpressBase.CoreBase.Globals
             this.name = Name;
         }
     }
-    
+
     public class FG_Row : DynamicObject
     {
         public int RowId { get; set; }
@@ -228,7 +231,7 @@ namespace ExpressBase.CoreBase.Globals
     public class FG_Control
     {
         public string Name { get; private set; }
-        
+
         public object Value { get; private set; }
 
         public FG_Control(string Name, object Value)
@@ -242,7 +245,4 @@ namespace ExpressBase.CoreBase.Globals
             return this.Value;
         }
     }
-
-    
-   
 }
