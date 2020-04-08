@@ -109,6 +109,12 @@ namespace ExpressBase.CoreBase.Globals
 
         public FG_Review Review { get; set; }
 
+        public int id { get; set; } // rowId
+
+        public int eb_loc_id { get; set; }
+
+        public string eb_ref_id { get; set; }
+
         public FG_WebForm()
         {
             this.FlatCtrls = new FG_Row();
@@ -263,7 +269,7 @@ namespace ExpressBase.CoreBase.Globals
 
     public class FG_Row : DynamicObject
     {
-        public int RowId { get; set; }
+        public int id { get; set; }
 
         public List<FG_Control> Controls { get; set; }
 
@@ -278,7 +284,7 @@ namespace ExpressBase.CoreBase.Globals
             {
                 FG_Control ctrl = this.Controls.Find(e => e.Name.Equals(name));
                 if (ctrl == null)
-                    Console.WriteLine($"Null ref in form globals. Name = {name}, CtrlCount = {this.Controls.Count}, RowId = {this.RowId}");
+                    Console.WriteLine($"Null ref in form globals. Name = {name}, CtrlCount = {this.Controls.Count}, RowId = {this.id}");
                 return ctrl;
             }
         }
