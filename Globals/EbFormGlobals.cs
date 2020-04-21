@@ -226,12 +226,12 @@ namespace ExpressBase.CoreBase.Globals
 
         public void complete()
         {
-            this._ReviewStatus = "complete";
+            this._ReviewStatus = "Completed";
         }
 
         public void abandon()
         {
-            this._ReviewStatus = "abandon";
+            this._ReviewStatus = "Abandoned";
         }
 
         public void setCurrentStageDataEditable()
