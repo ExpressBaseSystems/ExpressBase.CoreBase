@@ -11,6 +11,8 @@ namespace ExpressBase.CoreBase.Globals
 
         public dynamic sourceform { get; private set; }
 
+        public dynamic parameters { get; set; }
+
         public FG_User user { get; private set; }
 
         public FG_System system { get; private set; }
@@ -34,6 +36,11 @@ namespace ExpressBase.CoreBase.Globals
                 this.form = fG_WebForm;
             this.user = fG_User;
             this.system = fG_System;
+        }
+
+        public FG_Root(FG_Params fG_Params)
+        {
+            this.parameters = fG_Params;
         }
     }
 
@@ -313,6 +320,74 @@ namespace ExpressBase.CoreBase.Globals
         public object getValue()
         {
             return this.Value;
+        }
+    }
+
+
+    public class FG_Params : DynamicObject
+    {
+        private Dictionary<string, FG_NV_List> Values { get; set; }
+
+        public FG_Params(Dictionary<string, FG_NV_List> values)
+        {
+            this.Values = values;
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            string name = binder.Name;
+            if (this.Values.ContainsKey(name))
+            {
+                result = this.Values[name];
+                return true;
+            }
+            else
+            {
+                throw new NullReferenceException(name + " is not a key in global parameter dictionary");
+            }
+        }
+    }
+
+    public class FG_NV_List : DynamicObject
+    {
+        public List<FG_NV> Values { get; private set; }
+
+        public FG_NV_List()
+        {
+            this.Values = new List<FG_NV>();
+        }
+
+        public void Add(FG_NV fG_NV)
+        {
+            this.Values.Add(fG_NV);
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            string name = binder.Name;
+            FG_NV entry = this.Values.Find(e => e.Name == name);
+            if (entry != null)
+            {
+                result = entry.Value;
+                return true;
+            }
+            else
+            {
+                throw new NullReferenceException(name + " is not a in global parameter list");
+            }
+        }
+    }
+
+    public class FG_NV
+    {
+        public string Name { get; private set; }
+
+        public object Value { get; private set; }
+
+        public FG_NV(string name, object value) 
+        {
+            this.Name = name;
+            this.Value = value;
         }
     }
 }
