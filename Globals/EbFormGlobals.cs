@@ -122,6 +122,8 @@ namespace ExpressBase.CoreBase.Globals
 
         public string eb_ref_id { get; set; }
 
+        public int eb_created_by { get; set; }
+
         public FG_WebForm()
         {
             this.FlatCtrls = new FG_Row();
