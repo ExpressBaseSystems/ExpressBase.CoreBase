@@ -124,6 +124,8 @@ namespace ExpressBase.CoreBase.Globals
 
         public int eb_created_by { get; set; }
 
+        public string __mode { get; set; }// "new" "edit"
+
         public FG_WebForm()
         {
             this.FlatCtrls = new FG_Row();
