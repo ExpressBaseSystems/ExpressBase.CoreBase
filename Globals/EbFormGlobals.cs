@@ -16,7 +16,9 @@ namespace ExpressBase.CoreBase.Globals
         public FG_User user { get; private set; }
 
         public FG_System system { get; private set; }
-        
+
+        public FG_DataDB datadb { get; private set; }
+
         public FG_Root(FG_WebForm fG_WebForm)
         {
             this.form = fG_WebForm;
@@ -28,7 +30,7 @@ namespace ExpressBase.CoreBase.Globals
             this.user = fG_User;
         }
 
-        public FG_Root(FG_WebForm fG_WebForm, FG_User fG_User, FG_System fG_System, int mode)
+        public FG_Root(FG_WebForm fG_WebForm, FG_User fG_User, FG_System fG_System, int mode, FG_DataDB fG_DataDB)
         {
             if (mode == 1)
                 this.sourceform = fG_WebForm;
@@ -36,6 +38,7 @@ namespace ExpressBase.CoreBase.Globals
                 this.form = fG_WebForm;
             this.user = fG_User;
             this.system = fG_System;
+            this.datadb = fG_DataDB;
         }
 
         public FG_Root(FG_Params fG_Params)
@@ -63,6 +66,23 @@ namespace ExpressBase.CoreBase.Globals
         }
     }
 
+    public delegate object ExecuteScalarDelegate(string Qry);
+
+    public class FG_DataDB
+    {
+        public ExecuteScalarDelegate ScalarDel { get; private set; }
+
+        public FG_DataDB(ExecuteScalarDelegate ScalarDel)
+        {
+            this.ScalarDel = ScalarDel;
+        }
+
+        public object executeScalar(string query)
+        {
+            return this.ScalarDel(query);
+        }
+    }
+
     public class FG_System
     {
         public List<FG_Notification> Notifications { get; set; }
@@ -81,7 +101,7 @@ namespace ExpressBase.CoreBase.Globals
         {
             this.Notifications.Add(new FG_Notification { RoleIds = roleIds, Title = title, NotifyBy = FG_NotifyBy.RoleIds });
         }
-        
+
         public void sendNotificationByUserGroupIds(List<int> ugIds, string title = null)
         {
             this.Notifications.Add(new FG_Notification { UserGroupIds = ugIds, Title = title, NotifyBy = FG_NotifyBy.UserGroupIds });
@@ -207,7 +227,7 @@ namespace ExpressBase.CoreBase.Globals
         }
         public Double Max(string cname)
         {
-            Double s = 0; 
+            Double s = 0;
             if (this.Rows.Count > 0)
                 double.TryParse(Convert.ToString(this.Rows[0][cname].getValue()), out s);
             foreach (FG_Row Row in this.Rows)
@@ -249,7 +269,7 @@ namespace ExpressBase.CoreBase.Globals
 
         public void setCurrentStageDataEditable()
         {
-            
+
         }
 
     }
@@ -390,10 +410,11 @@ namespace ExpressBase.CoreBase.Globals
 
         public object Value { get; private set; }
 
-        public FG_NV(string name, object value) 
+        public FG_NV(string name, object value)
         {
             this.Name = name;
             this.Value = value;
         }
     }
+
 }
