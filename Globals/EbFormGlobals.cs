@@ -177,10 +177,52 @@ namespace ExpressBase.CoreBase.Globals
 
         public List<FG_Row> Rows { get; private set; }
 
+        public FG_Row currentRow { get; private set; }
+
         public FG_DataGrid(string name, List<FG_Row> rows)
         {
             this.Name = name;
             this.Rows = rows;
+        }
+
+        public void setCurRow(int index) 
+        {
+            if (this.Rows.Count > index && index >= 0)
+                this.currentRow = this.Rows[index];
+            throw new IndexOutOfRangeException($"{this.Name} (DataGrid) has only {this.Rows.Count} rows. Requested index: {index}");
+        }
+
+        public FG_Row getRowByIndex(int index) 
+        {
+            if (this.Rows.Count > index && index >= 0)
+                return this.Rows[index];
+            throw new IndexOutOfRangeException($"{this.Name} (DataGrid) has only {this.Rows.Count} rows. Requested index: {index}");
+        }
+
+        public int GetEnumerator() 
+        {
+            if (this.Rows.Count > 0)
+            {
+                if (this.currentRow == null)
+                    this.currentRow = this.Rows[0];
+                else
+                {
+                    int index = this.Rows.FindIndex(e => e == this.currentRow);
+                    if ((this.Rows.Count - 1) > index)
+                    {
+                        this.currentRow = this.Rows[index + 1];
+                        return index + 1;
+                    }
+                    else
+                        this.currentRow = this.Rows[0];
+                }
+            }
+            else
+            {
+                this.currentRow = null;
+                return -1;
+            }
+            return 0;
         }
 
         public Double Sum(string cname)
