@@ -19,6 +19,8 @@ namespace ExpressBase.CoreBase.Globals
 
         public FG_DataDB datadb { get; private set; }
 
+        public FG_Locations locations { get; set; }
+
         public FG_Root(FG_WebForm fG_WebForm)
         {
             this.form = fG_WebForm;
@@ -30,7 +32,7 @@ namespace ExpressBase.CoreBase.Globals
             this.user = fG_User;
         }
 
-        public FG_Root(FG_WebForm fG_WebForm, FG_User fG_User, FG_System fG_System, int mode, FG_DataDB fG_DataDB)
+        public FG_Root(FG_WebForm fG_WebForm, FG_User fG_User, FG_System fG_System, int mode, FG_DataDB fG_DataDB, FG_Locations fG_Locations)
         {
             if (mode == 1)
                 this.sourceform = fG_WebForm;
@@ -39,6 +41,7 @@ namespace ExpressBase.CoreBase.Globals
             this.user = fG_User;
             this.system = fG_System;
             this.datadb = fG_DataDB;
+            this.locations = fG_Locations;
         }
 
         public FG_Root(FG_Params fG_Params)
@@ -119,6 +122,46 @@ namespace ExpressBase.CoreBase.Globals
         public string Title { get; set; }
 
         public FG_NotifyBy NotifyBy { get; set; }
+    }
+
+    public class FG_Locations : List<FG_Location>
+    {
+        public FG_Locations(): base() { }
+
+        public FG_Location getLocationById(int locId)
+        {
+            return this.Find(e => e.LocId == locId);
+        }
+
+        public FG_Location getLocationByShortName(string sname)
+        {
+            return this.Find(e => e.ShortName == sname);
+        }
+    }
+
+    public class FG_Location
+    {
+        public int LocId { get; set; }
+
+        public int TypeId { get; set; }
+
+        public string TypeName { get; set; }
+
+        public bool IsGroup { get; set; }
+
+        public int ParentId { get; set; }
+
+        public string LongName { get; set; }
+
+        public string ShortName { get; set; }
+
+        public string Logo { get; set; }
+
+        public string WeekHoliday1 { get; set; }
+
+        public string WeekHoliday2 { get; set; }
+
+        public Dictionary<string, string> Meta { get; set; }
     }
 
     public enum FG_NotifyBy
