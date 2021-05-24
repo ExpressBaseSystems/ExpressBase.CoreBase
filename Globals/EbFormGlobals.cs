@@ -32,9 +32,9 @@ namespace ExpressBase.CoreBase.Globals
             this.user = fG_User;
         }
 
-        public FG_Root(FG_WebForm fG_WebForm, FG_User fG_User, FG_System fG_System, int mode, FG_DataDB fG_DataDB, FG_Locations fG_Locations)
+        public FG_Root(FG_WebForm fG_WebForm, FG_User fG_User, FG_System fG_System, bool isSrcForm, FG_DataDB fG_DataDB, FG_Locations fG_Locations)
         {
-            if (mode == 1)
+            if (isSrcForm)
                 this.sourceform = fG_WebForm;
             else
                 this.form = fG_WebForm;
