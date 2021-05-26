@@ -21,6 +21,10 @@ namespace ExpressBase.CoreBase.Globals
 
         public FG_Locations locations { get; set; }
 
+        public dynamic destinationform { get; set; }
+
+        public List<FG_WebForm> slaveForms { get; set; }
+
         public FG_Root(FG_WebForm fG_WebForm)
         {
             this.form = fG_WebForm;
@@ -212,6 +216,20 @@ namespace ExpressBase.CoreBase.Globals
             return true;
         }
 
+        public void UpdateCurrentRowOfDG(string DgName)
+        {
+            FG_DataGrid DG = DataGrids.Find(e => e.Name == DgName);
+            if (DG == null)
+                throw new Exception("Exception in UpdateCurrentRowOfDG- DG not found in: " + DgName);
+
+            FG_Row row = new FG_Row();
+            foreach(FG_Control fgCtrl in DG.RowModel.Controls)
+            {
+                row.Controls.Add(new FG_Control(fgCtrl.Name, fgCtrl.Value));
+            }
+            DG.Rows.Add(row);
+            DG.currentRow = row;
+        }
     }
 
     public class FG_DataGrid
@@ -220,12 +238,21 @@ namespace ExpressBase.CoreBase.Globals
 
         public List<FG_Row> Rows { get; private set; }
 
-        public FG_Row currentRow { get; private set; }
+        public FG_Row RowModel { get; private set; }
+
+        public FG_Row currentRow { get; set; }
 
         public FG_DataGrid(string name, List<FG_Row> rows)
         {
             this.Name = name;
             this.Rows = rows;
+        }
+
+        public FG_DataGrid(string name, FG_Row rowModel)
+        {
+            this.Name = name;
+            this.Rows = new List<FG_Row>();
+            this.RowModel = rowModel;
         }
 
         public void setCurRow(int index) 
@@ -431,6 +458,11 @@ namespace ExpressBase.CoreBase.Globals
         public object getValue()
         {
             return this.Value;
+        }
+
+        public void setValue(object Value)
+        {
+            this.Value = Value;
         }
     }
 
