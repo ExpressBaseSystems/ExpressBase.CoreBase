@@ -428,8 +428,8 @@ namespace ExpressBase.CoreBase.Globals
             get
             {
                 FG_Control ctrl = this.Controls.Find(e => e.Name.Equals(name));
-                if (ctrl == null)
-                    Console.WriteLine($"Null ref in form globals. Name = {name}, CtrlCount = {this.Controls.Count}, RowId = {this.id}");
+                //if (ctrl == null)
+                //    Console.WriteLine($"Null ref in form globals. Name = {name}, CtrlCount = {this.Controls.Count}, RowId = {this.id}");
                 return ctrl;
             }
         }
