@@ -23,7 +23,7 @@ namespace ExpressBase.CoreBase.Globals
 
         public dynamic destinationform { get; set; }
 
-        public List<FG_WebForm> slaveForms { get; set; }
+        public List<FG_WebForm> DestinationForms { get; set; }
 
         public FG_Root(FG_WebForm fG_WebForm)
         {
@@ -177,26 +177,39 @@ namespace ExpressBase.CoreBase.Globals
 
     public class FG_WebForm : DynamicObject
     {
+        public string MasterTable { get; private set; }
+
         public FG_Row FlatCtrls { get; set; }
 
         public List<FG_DataGrid> DataGrids { get; set; }
 
         public FG_Review Review { get; set; }
 
-        public int id { get; set; } // rowId
+        public int eb_loc_id { get; private set; }
 
-        public int eb_loc_id { get; set; }
+        public string eb_ref_id { get; private set; }
 
-        public string eb_ref_id { get; set; }
+        public int eb_created_by { get; private set; }
 
-        public int eb_created_by { get; set; }
+        public string eb_created_at { get; private set; }
 
-        public string eb_created_at { get; set; }
+        public string __mode { get; private set; }// "new" "edit"
 
-        public string __mode { get; set; }// "new" "edit"
+        public dynamic id { get; private set; }
 
-        public FG_WebForm()
+        public FG_WebForm(string masterTbl, int dataId, int locId, string refId, int createdBy, string createdAt)
         {
+            this.MasterTable = masterTbl;
+            if (dataId > 0)
+                this.id = dataId;
+            else
+                this.id = $"__DataId_PlaceHolder__(SELECT eb_currval('{masterTbl}_id_seq'))";
+            this.eb_loc_id = locId;
+            this.eb_ref_id = refId;
+            this.eb_created_by = createdBy;
+            this.eb_created_at = createdAt;
+            this.__mode = dataId > 0 ? "edit" : "new";
+
             this.FlatCtrls = new FG_Row();
             this.DataGrids = new List<FG_DataGrid>();
         }
@@ -242,16 +255,10 @@ namespace ExpressBase.CoreBase.Globals
 
         public FG_Row currentRow { get; set; }
 
-        public FG_DataGrid(string name, List<FG_Row> rows)
+        public FG_DataGrid(string name, List<FG_Row> rows, FG_Row rowModel)
         {
             this.Name = name;
             this.Rows = rows;
-        }
-
-        public FG_DataGrid(string name, FG_Row rowModel)
-        {
-            this.Name = name;
-            this.Rows = new List<FG_Row>();
             this.RowModel = rowModel;
         }
 
