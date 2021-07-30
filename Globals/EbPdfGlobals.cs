@@ -24,19 +24,20 @@ namespace ExpressBase.CoreBase.Globals
 
         public EbPdfGlobals()
         {
-            T0 = new PDF_NTVDict();
-            T1 = new PDF_NTVDict();
-            T2 = new PDF_NTVDict();
-            T3 = new PDF_NTVDict();
-            T4 = new PDF_NTVDict();
-            T5 = new PDF_NTVDict();
-            T6 = new PDF_NTVDict();
-            T7 = new PDF_NTVDict();
-            T8 = new PDF_NTVDict();
-            T9 = new PDF_NTVDict();
-            Params = new PDF_NTVDict();
-            Calc = new PDF_NTVDict();
-            Summary = new PDF_NTVDict();
+            T0 = new PdfNTVDict();
+            T1 = new PdfNTVDict();
+            T2 = new PdfNTVDict();
+            T3 = new PdfNTVDict();
+            T4 = new PdfNTVDict();
+            T5 = new PdfNTVDict();
+            T6 = new PdfNTVDict();
+            T7 = new PdfNTVDict();
+            T8 = new PdfNTVDict();
+            T9 = new PdfNTVDict();
+            Params = new PdfNTVDict();
+            Calc = new PdfNTVDict();
+            Summary = new PdfNTVDict();
+            CurrentField = new PdfGReportField();
         }
 
         public dynamic this[string tableIndex]
@@ -75,7 +76,7 @@ namespace ExpressBase.CoreBase.Globals
         }
     }
 
-    public class PDF_NTVDict : DynamicObject
+    public class PdfNTVDict : DynamicObject
     {
         private Dictionary<string, object> dictionary = new Dictionary<string, object>();
 
@@ -95,46 +96,46 @@ namespace ExpressBase.CoreBase.Globals
             dictionary.TryGetValue(name, out x);
             if (x != null)
             {
-                var _data = x as PDF_NTV;
+                var _data = x as PdfNTV;
 
-                if (_data.Type == PDF_EbDbTypes.Int32)
-                    result = Convert.ToDecimal((x as PDF_NTV).Value);
-                else if (_data.Type == PDF_EbDbTypes.Int64)
-                    result = Convert.ToDecimal((x as PDF_NTV).Value);
-                else if (_data.Type == PDF_EbDbTypes.Int16)
-                    result = Convert.ToDecimal((x as PDF_NTV).Value);
-                else if (_data.Type == PDF_EbDbTypes.Decimal)
-                    result = Convert.ToDecimal((x as PDF_NTV).Value);
-                else if (_data.Type == PDF_EbDbTypes.String)
-                    result = ((x as PDF_NTV).Value).ToString();
-                else if (_data.Type == PDF_EbDbTypes.DateTime)
-                    result = Convert.ToDateTime((x as PDF_NTV).Value);
-                else if (_data.Type == PDF_EbDbTypes.Boolean)
-                    result = Convert.ToBoolean((x as PDF_NTV).Value);
+                if (_data.Type == PdfEbDbTypes.Int32)
+                    result = Convert.ToDecimal((x as PdfNTV).Value);
+                else if (_data.Type == PdfEbDbTypes.Int64)
+                    result = Convert.ToDecimal((x as PdfNTV).Value);
+                else if (_data.Type == PdfEbDbTypes.Int16)
+                    result = Convert.ToDecimal((x as PdfNTV).Value);
+                else if (_data.Type == PdfEbDbTypes.Decimal)
+                    result = Convert.ToDecimal((x as PdfNTV).Value);
+                else if (_data.Type == PdfEbDbTypes.String)
+                    result = ((x as PdfNTV).Value).ToString();
+                else if (_data.Type == PdfEbDbTypes.DateTime)
+                    result = Convert.ToDateTime((x as PdfNTV).Value);
+                else if (_data.Type == PdfEbDbTypes.Boolean)
+                    result = Convert.ToBoolean((x as PdfNTV).Value);
                 else
-                    result = (x as PDF_NTV).Value.ToString();
+                    result = (x as PdfNTV).Value.ToString();
                 return true;
             }
             result = null;
             return false;
         }
 
-        public void Add(string name, PDF_NTV value)
+        public void Add(string name, PdfNTV value)
         {
             dictionary[name] = value;
         }
     }
 
-    public class PDF_NTV
+    public class PdfNTV
     {
         public string Name { get; set; }
 
-        public PDF_EbDbTypes Type { get; set; }
+        public PdfEbDbTypes Type { get; set; }
 
         public object Value { get; set; }
     }
 
-    public enum PDF_EbDbTypes
+    public enum PdfEbDbTypes
     {
         AnsiString = 0,
         Binary = 1,
@@ -168,5 +169,84 @@ namespace ExpressBase.CoreBase.Globals
         BooleanOriginal = 30,
         Int = 31,
         VarChar = 32
+    }
+
+    public class PdfGReportField
+    {
+        public float Left { get; set; }
+
+        public float Width { get; set; }
+
+        public float Top { get; set; }
+
+        public float Height { get; set; }
+
+        public string BackColor { get; set; }
+
+        public string ForeColor { get; set; }
+
+        public PdfGEbFont Font { get; set; }
+
+        public PdfGTextAlign TextAlign { get; set; }
+
+        public bool IsHidden { get; set; }
+
+        public PdfGReportField()
+        {
+        }
+
+        public PdfGReportField(float left, float width, float top, float height, string backColor, string foreColor, bool isHidden, PdfGEbFont font)
+        {
+            Left = left;
+            Width = width;
+            Top = top;
+            Height = height;
+            BackColor = backColor;
+            ForeColor = foreColor;
+            IsHidden = isHidden;
+            Font = font;
+        }
+    }
+
+    public class PdfGEbFont
+    {
+        public PdfGEbFont() { }
+
+        public string FontName { get; set; } = "Roboto";
+
+        public int Size { get; set; }
+
+        public PdfGFontStyle Style { get; set; }
+
+
+        public string color { get; set; }
+
+        public bool Caps { get; set; }
+
+        public bool Strikethrough { get; set; }
+
+        public bool Underline { get; set; }
+
+        public enum PdfGFontStyle
+        {
+            NORMAL = 0,
+            ITALIC = 2,
+            BOLD = 1,
+            BOLDITALIC = 3
+        }
+    }
+
+    public enum PdfGTextAlign
+    {
+        Left = 0,
+        Center = 1,
+        Right = 2,
+        Justify = 3,
+        Top = 4,
+        Middle = 5,
+        Bottom = 6,
+        Baseline = 7,
+        JustifiedAll = 8,
+        Undefined = -1
     }
 }
