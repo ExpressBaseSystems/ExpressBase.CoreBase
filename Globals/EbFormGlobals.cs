@@ -130,7 +130,7 @@ namespace ExpressBase.CoreBase.Globals
 
     public class FG_Locations : List<FG_Location>
     {
-        public FG_Locations(): base() { }
+        public FG_Locations() : base() { }
 
         public FG_Location getLocationById(int locId)
         {
@@ -236,9 +236,9 @@ namespace ExpressBase.CoreBase.Globals
                 throw new Exception("Exception in UpdateCurrentRowOfDG- DG not found in: " + DgName);
 
             FG_Row row = new FG_Row();
-            foreach(FG_Control fgCtrl in DG.RowModel.Controls)
+            foreach (FG_Control fgCtrl in DG.RowModel.Controls)
             {
-                row.Controls.Add(new FG_Control(fgCtrl.Name, fgCtrl.Value));
+                row.Controls.Add(new FG_Control(fgCtrl.Name, fgCtrl.Value, fgCtrl.Rows));
             }
             DG.Rows.Add(row);
             DG.currentRow = row;
@@ -262,21 +262,21 @@ namespace ExpressBase.CoreBase.Globals
             this.RowModel = rowModel;
         }
 
-        public void setCurRow(int index) 
+        public void setCurRow(int index)
         {
             if (this.Rows.Count > index && index >= 0)
                 this.currentRow = this.Rows[index];
             throw new IndexOutOfRangeException($"{this.Name} (DataGrid) has only {this.Rows.Count} rows. Requested index: {index}");
         }
 
-        public FG_Row getRowByIndex(int index) 
+        public FG_Row getRowByIndex(int index)
         {
             if (this.Rows.Count > index && index >= 0)
                 return this.Rows[index];
             throw new IndexOutOfRangeException($"{this.Name} (DataGrid) has only {this.Rows.Count} rows. Requested index: {index}");
         }
 
-        public int GetEnumerator() 
+        public int GetEnumerator()
         {
             if (this.Rows.Count > 0)
             {
@@ -456,10 +456,13 @@ namespace ExpressBase.CoreBase.Globals
 
         public object Value { get; private set; }
 
-        public FG_Control(string Name, object Value)
+        public Dictionary<string, List<object>> Rows { get; private set; }
+
+        public FG_Control(string Name, object Value, Dictionary<string, List<object>> Rows)
         {
             this.Name = Name;
             this.Value = Value;
+            this.Rows = Rows;
         }
 
         public object getValue()
@@ -470,6 +473,14 @@ namespace ExpressBase.CoreBase.Globals
         public void setValue(object Value)
         {
             this.Value = Value;
+        }
+
+        public object getColumn(string ColumnName)
+        {
+            if (Rows?.ContainsKey(ColumnName) == true && Rows[ColumnName].Count > 0)
+                return Rows[ColumnName][0];
+            Console.WriteLine("getColumn value not found: " + this.Name);
+            return null;
         }
     }
 
