@@ -203,7 +203,7 @@ namespace ExpressBase.CoreBase.Globals
             if (dataId > 0)
                 this.id = dataId;
             else
-                this.id = $"__DataId_PlaceHolder__(SELECT eb_currval('{masterTbl}_id_seq'))";
+                this.id = $"{FG_Constants.DataId_PlaceHolder}(SELECT eb_currval('{masterTbl}_id_seq'))";
             this.eb_loc_id = locId;
             this.eb_ref_id = refId;
             this.eb_created_by = createdBy;
@@ -238,7 +238,7 @@ namespace ExpressBase.CoreBase.Globals
             FG_Row row = new FG_Row();
             foreach (FG_Control fgCtrl in DG.RowModel.Controls)
             {
-                row.Controls.Add(new FG_Control(fgCtrl.Name, fgCtrl.Value, fgCtrl.Rows));
+                row.Controls.Add(new FG_Control(fgCtrl.Name, fgCtrl.Type, fgCtrl.Value, fgCtrl.Metas));
             }
             DG.Rows.Add(row);
             DG.currentRow = row;
@@ -454,15 +454,18 @@ namespace ExpressBase.CoreBase.Globals
     {
         public string Name { get; private set; }
 
+        public string Type { get; private set; }
+
         public object Value { get; private set; }
 
-        public Dictionary<string, List<object>> Rows { get; private set; }
+        public Dictionary<string, object> Metas { get; private set; }
 
-        public FG_Control(string Name, object Value, Dictionary<string, List<object>> Rows)
+        public FG_Control(string Name, string Type, object Value, Dictionary<string, object> Metas)
         {
             this.Name = Name;
+            this.Type = Type;
             this.Value = Value;
-            this.Rows = Rows;
+            this.Metas = Metas;
         }
 
         public object getValue()
@@ -477,10 +480,32 @@ namespace ExpressBase.CoreBase.Globals
 
         public object getColumn(string ColumnName)
         {
-            if (Rows?.ContainsKey(ColumnName) == true && Rows[ColumnName].Count > 0)
-                return Rows[ColumnName][0];
+            if (this.Metas?.ContainsKey(FG_Constants.Columns) == true && this.Metas[FG_Constants.Columns] != null &&
+                this.Metas[FG_Constants.Columns] is Dictionary<string, List<object>> Columns && Columns.ContainsKey(ColumnName) && Columns[ColumnName].Count > 0)
+            {
+                return Columns[ColumnName][0];
+            }
             Console.WriteLine("getColumn value not found: " + this.Name);
             return null;
+        }
+
+        public string replacePrefixWith(string prefix)
+        {
+            string st = Convert.ToString(this.Value);
+            if (st == FG_Constants.AutoId_PlaceHolder)
+            {
+                st = prefix + FG_Constants.AutoId_SerialNo_PlaceHolder;
+                return st;
+            }
+            else if (this.Metas.ContainsKey(FG_Constants.SerialLength))
+            {
+                int iSL = Convert.ToInt32(this.Metas[FG_Constants.SerialLength]);
+                if (st.Length <= iSL)
+                    throw new Exception($"Exception in replacePrefixWith. Name: {this.Name}; st: {st}; SerialLength: {iSL};");
+                st = prefix + st.Substring(st.Length - iSL);
+                return st;
+            }
+            throw new Exception($"Inappropriate use of replacePrefixWith. Name: {this.Name}; st: {st};");
         }
     }
 
@@ -550,6 +575,24 @@ namespace ExpressBase.CoreBase.Globals
             this.Name = name;
             this.Value = value;
         }
+    }
+
+    public static class FG_Constants
+    {
+        //Control level
+        public const string DataId_PlaceHolder = "__DataId_PlaceHolder__";
+        public const string AutoId_PlaceHolder = "__EbAutoId_PlaceHolder__";
+        public const string AutoId_SerialNo_PlaceHolder = "__EbAutoId_SerialNo_PlaceHolder__";
+        public const string AutoId_Full_PlaceHolder = "__EbAutoId_Full_PlaceHolder__";
+
+        //Object Types
+        //public const string AutoId = "AutoId";
+        //public const string PowerSelect = "PowerSelect";
+        //public const string PowerSelectColumn = "PowerSelectColumn";
+
+        //Meta Keys
+        public const string Columns = "Columns";
+        public const string SerialLength = "SerialLength";
     }
 
 }
