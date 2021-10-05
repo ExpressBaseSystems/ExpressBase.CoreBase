@@ -92,8 +92,7 @@ namespace ExpressBase.CoreBase.Globals
         {
             string name = binder.Name;
 
-            object x;
-            dictionary.TryGetValue(name, out x);
+            dictionary.TryGetValue(name, out object x);
             if (x != null)
             {
                 var _data = x as PdfNTV;
