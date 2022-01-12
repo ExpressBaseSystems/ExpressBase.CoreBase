@@ -37,7 +37,7 @@ namespace ExpressBase.CoreBase.Globals
             Params = new PdfNTVDict();
             Calc = new PdfNTVDict();
             Summary = new PdfNTVDict();
-            CurrentField = new PdfGReportField();
+            CurrentField = new PdfNTVDict();
         }
 
         public dynamic this[string tableIndex]
@@ -70,6 +70,8 @@ namespace ExpressBase.CoreBase.Globals
                     return this.Calc;
                 else if (tableIndex == "Summary")
                     return this.Summary;
+                else if (tableIndex == "CurrentField")
+                    return this.CurrentField;
                 else
                     return this.T0;
             }
@@ -117,6 +119,35 @@ namespace ExpressBase.CoreBase.Globals
             }
             result = null;
             return false;
+        }
+
+        public object GetValue(string name)
+        {
+            object result = null;
+
+            dictionary.TryGetValue(name, out object x);
+            if (x != null)
+            {
+                var _data = x as PdfNTV;
+
+                if (_data.Type == PdfEbDbTypes.Int32)
+                    result = Convert.ToDecimal((x as PdfNTV).Value);
+                else if (_data.Type == PdfEbDbTypes.Int64)
+                    result = Convert.ToDecimal((x as PdfNTV).Value);
+                else if (_data.Type == PdfEbDbTypes.Int16)
+                    result = Convert.ToDecimal((x as PdfNTV).Value);
+                else if (_data.Type == PdfEbDbTypes.Decimal)
+                    result = Convert.ToDecimal((x as PdfNTV).Value);
+                else if (_data.Type == PdfEbDbTypes.String)
+                    result = ((x as PdfNTV).Value).ToString();
+                else if (_data.Type == PdfEbDbTypes.DateTime)
+                    result = Convert.ToDateTime((x as PdfNTV).Value);
+                else if (_data.Type == PdfEbDbTypes.Boolean)
+                    result = Convert.ToBoolean((x as PdfNTV).Value);
+                else
+                    result = (x as PdfNTV).Value.ToString();
+            }
+            return result;
         }
 
         public void Add(string name, PdfNTV value)
