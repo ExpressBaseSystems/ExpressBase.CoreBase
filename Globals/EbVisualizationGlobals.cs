@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ExpressBase.CoreBase.Globals
 {
-    public class EbPdfGlobals
+    public class EbVisualizationGlobals
     {
         public dynamic T0 { get; set; }
         public dynamic T1 { get; set; }
@@ -20,24 +20,24 @@ namespace ExpressBase.CoreBase.Globals
         public dynamic Params { get; set; }
         public dynamic Calc { get; set; }
         public dynamic Summary { get; set; }
+
         public dynamic CurrentField { get; set; }
 
-        public EbPdfGlobals()
+        public EbVisualizationGlobals()
         {
-            T0 = new PdfNTVDict();
-            T1 = new PdfNTVDict();
-            T2 = new PdfNTVDict();
-            T3 = new PdfNTVDict();
-            T4 = new PdfNTVDict();
-            T5 = new PdfNTVDict();
-            T6 = new PdfNTVDict();
-            T7 = new PdfNTVDict();
-            T8 = new PdfNTVDict();
-            T9 = new PdfNTVDict();
-            Params = new PdfNTVDict();
-            Calc = new PdfNTVDict();
-            Summary = new PdfNTVDict();
-            CurrentField = new PdfNTVDict();
+            T0 = new NTVDict();
+            T1 = new NTVDict();
+            T2 = new NTVDict();
+            T3 = new NTVDict();
+            T4 = new NTVDict();
+            T5 = new NTVDict();
+            T6 = new NTVDict();
+            T7 = new NTVDict();
+            T8 = new NTVDict();
+            T9 = new NTVDict();
+            Params = new NTVDict();
+            Calc = new NTVDict();
+            Summary = new NTVDict();
         }
 
         public dynamic this[string tableIndex]
@@ -70,15 +70,13 @@ namespace ExpressBase.CoreBase.Globals
                     return this.Calc;
                 else if (tableIndex == "Summary")
                     return this.Summary;
-                else if (tableIndex == "CurrentField")
-                    return this.CurrentField;
                 else
                     return this.T0;
             }
         }
     }
 
-    public class PdfNTVDict : DynamicObject
+    public class NTVDict : DynamicObject
     {
         private Dictionary<string, object> dictionary = new Dictionary<string, object>();
 
@@ -94,7 +92,8 @@ namespace ExpressBase.CoreBase.Globals
         {
             string name = binder.Name;
 
-            dictionary.TryGetValue(name, out object x);
+            object x;
+            dictionary.TryGetValue(name, out x);
             if (x != null)
             {
                 var _data = x as GNTV;
@@ -113,10 +112,14 @@ namespace ExpressBase.CoreBase.Globals
                     result = Convert.ToDateTime((x as GNTV).Value);
                 else if (_data.Type == GlobalDbType.Boolean)
                     result = Convert.ToBoolean((x as GNTV).Value);
+                //else if (_data.Type == GlobalDbType.Object && _data.Value.GetType() == typeof(JObject))
+                //    result = _data.Value as JObject;
                 else
                     result = (x as GNTV).Value.ToString();
+
                 return true;
             }
+
             result = null;
             return false;
         }
@@ -148,90 +151,13 @@ namespace ExpressBase.CoreBase.Globals
                     result = (x as GNTV).Value.ToString();
             }
             return result;
-        }
 
+        }
         public void Add(string name, GNTV value)
         {
             dictionary[name] = value;
         }
     }
-         
-    public class PdfGReportField
-    {
-        public float Left { get; set; }
 
-        public float Width { get; set; }
-
-        public float Top { get; set; }
-
-        public float Height { get; set; }
-
-        public string BackColor { get; set; }
-
-        public string ForeColor { get; set; }
-
-        public PdfGEbFont Font { get; set; }
-
-        public PdfGTextAlign TextAlign { get; set; }
-
-        public bool IsHidden { get; set; }
-
-        public PdfGReportField()
-        {
-        }
-
-        public PdfGReportField(float left, float width, float top, float height, string backColor, string foreColor, bool isHidden, PdfGEbFont font)
-        {
-            Left = left;
-            Width = width;
-            Top = top;
-            Height = height;
-            BackColor = backColor;
-            ForeColor = foreColor;
-            IsHidden = isHidden;
-            Font = font;
-        }
-    }
-
-    public class PdfGEbFont
-    {
-        public PdfGEbFont() { }
-
-        public string FontName { get; set; } = "Roboto";
-
-        public int Size { get; set; }
-
-        public PdfGFontStyle Style { get; set; }
-
-
-        public string color { get; set; }
-
-        public bool Caps { get; set; }
-
-        public bool Strikethrough { get; set; }
-
-        public bool Underline { get; set; }
-
-        public enum PdfGFontStyle
-        {
-            NORMAL = 0,
-            ITALIC = 2,
-            BOLD = 1,
-            BOLDITALIC = 3
-        }
-    }
-
-    public enum PdfGTextAlign
-    {
-        Left = 0,
-        Center = 1,
-        Right = 2,
-        Justify = 3,
-        Top = 4,
-        Middle = 5,
-        Bottom = 6,
-        Baseline = 7,
-        JustifiedAll = 8,
-        Undefined = -1
-    }
+    
 }
