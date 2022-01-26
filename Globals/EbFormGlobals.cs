@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodingSeb.ExpressionEvaluator;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Text;
@@ -24,6 +25,8 @@ namespace ExpressBase.CoreBase.Globals
         public dynamic destinationform { get; set; }
 
         public List<FG_WebForm> DestinationForms { get; set; }
+
+        public Dictionary<int, object[]> out_dict { get; set; }
 
         public FG_Root(FG_WebForm fG_WebForm)
         {
@@ -51,6 +54,11 @@ namespace ExpressBase.CoreBase.Globals
         public FG_Root(FG_Params fG_Params)
         {
             this.parameters = fG_Params;
+        }
+
+        public void InitOutputDict()
+        {
+            out_dict = new Dictionary<int, object[]>();
         }
     }
 
@@ -227,6 +235,20 @@ namespace ExpressBase.CoreBase.Globals
             if (result == null)
                 throw new NullReferenceException(name + " is not a control");
             return true;
+        }
+
+        public object TryGetMember(string name)
+        {
+            object result = this.FlatCtrls[name];
+            if (result == null)
+            {
+                result = this.DataGrids.Find(e => e.Name == name);
+                if (result == null && this.Review != null && name == "review")
+                    result = this.Review;
+            }
+            if (result == null)
+                throw new NullReferenceException(name + " is not a control");
+            return result;
         }
 
         public void UpdateCurrentRowOfDG(string DgName)
@@ -448,6 +470,14 @@ namespace ExpressBase.CoreBase.Globals
                 throw new Exception(binder.Name + " is not a control");
             return true;
         }
+
+        public FG_Control TryGetMember(string name)
+        {
+            FG_Control result = this.Controls.Find(e => e.Name.Equals(name));
+            if (result == null)
+                throw new Exception(name + " is not a control");
+            return result;
+        }
     }
 
     public class FG_Control
@@ -532,6 +562,13 @@ namespace ExpressBase.CoreBase.Globals
                 throw new NullReferenceException(name + " is not a key in global parameter dictionary");
             }
         }
+
+        public FG_NV_List TryGetMember(string name)
+        {
+            if (this.Values.ContainsKey(name))
+                return this.Values[name];
+            throw new NullReferenceException(name + " is not a key in global parameter dictionary");
+        }
     }
 
     public class FG_NV_List : DynamicObject
@@ -561,6 +598,14 @@ namespace ExpressBase.CoreBase.Globals
             {
                 throw new NullReferenceException(name + " is not a in global parameter list");
             }
+        }
+
+        public object TryGetMember(string name)
+        {
+            FG_NV entry = this.Values.Find(e => e.Name == name);
+            if (entry != null)
+                return entry.Value;
+            throw new NullReferenceException(name + " is not a in global parameter list");
         }
     }
 
@@ -593,6 +638,41 @@ namespace ExpressBase.CoreBase.Globals
         //Meta Keys
         public const string Columns = "Columns";
         public const string SerialLength = "SerialLength";
+    }
+
+    public static class FG_Evaluator
+    {
+        public static object ScriptEvaluate(string code, FG_Root globals)
+        {
+            ExpressionEvaluator evaluator = new ExpressionEvaluator
+            {
+                OptionScriptNeedSemicolonAtTheEndOfLastExpression = false,
+                Context = globals
+            };
+            evaluator.EvaluateVariable += EvaluateVariable;
+            object obj = evaluator.ScriptEvaluate(code);
+            return obj;
+        }
+
+        private static void EvaluateVariable(object sender, VariableEvaluationEventArg e)
+        {
+            if (e.This is FG_WebForm form)
+            {
+                e.Value = form.TryGetMember(e.Name);
+            }
+            else if (e.This is FG_Row row)
+            {
+                e.Value = row.TryGetMember(e.Name);
+            }
+            else if (e.This is FG_Params p)
+            {
+                e.Value = p.TryGetMember(e.Name);
+            }
+            else if (e.This is FG_NV_List nv)
+            {
+                e.Value = nv.TryGetMember(e.Name);
+            }
+        }
     }
 
 }
