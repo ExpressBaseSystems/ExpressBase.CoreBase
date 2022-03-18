@@ -7,7 +7,6 @@ namespace ExpressBase.CoreBase.Globals
 {
     public class ApiGlobalParent
     {
-
         public delegate dynamic GetResourceValueByIndexHandler(int index);
 
         public delegate dynamic GetResourceValueByNameHandler(string name);
@@ -28,6 +27,7 @@ namespace ExpressBase.CoreBase.Globals
         public event GoToResourceByNameHandler GoToByNameHandler;
 
         public event ExitWithResultHandler ExitResultHandler;
+
 
         public dynamic GetResourceValue(int index)
         {
@@ -54,6 +54,7 @@ namespace ExpressBase.CoreBase.Globals
             ExitResultHandler.Invoke(obj);
         }
     }
+
     public class ApiScriptHelper
     {
         internal ApiGlobalsCoreBase Globals { set; get; }
@@ -103,7 +104,6 @@ namespace ExpressBase.CoreBase.Globals
             Globals.ExitWithResult(obj);
         }
     }
-
 
     public class ApiGlobalsCoreBase : ApiGlobalParent
     {

@@ -124,6 +124,35 @@ namespace ExpressBase.CoreBase.Globals
             return false;
         }
 
+        public Object TryGetMember(string name)
+        {
+            object result = null;
+            object x;
+            dictionary.TryGetValue(name, out x);
+            if (x != null)
+            {
+                var _data = x as GNTV;
+
+                if (_data.Type == GlobalDbType.Int32)
+                    result = Convert.ToDecimal((x as GNTV).Value);
+                else if (_data.Type == GlobalDbType.Int64)
+                    result = Convert.ToDecimal((x as GNTV).Value);
+                else if (_data.Type == GlobalDbType.Int16)
+                    result = Convert.ToDecimal((x as GNTV).Value);
+                else if (_data.Type == GlobalDbType.Decimal)
+                    result = Convert.ToDecimal((x as GNTV).Value);
+                else if (_data.Type == GlobalDbType.String)
+                    result = ((x as GNTV).Value).ToString();
+                else if (_data.Type == GlobalDbType.DateTime)
+                    result = Convert.ToDateTime((x as GNTV).Value);
+                else if (_data.Type == GlobalDbType.Boolean)
+                    result = Convert.ToBoolean((x as GNTV).Value);
+                else
+                    result = (x as GNTV).Value.ToString();
+            }
+            return result;
+        }
+
         public object GetValue(string name)
         {
             object result = null;
@@ -159,5 +188,5 @@ namespace ExpressBase.CoreBase.Globals
         }
     }
 
-    
+
 }
