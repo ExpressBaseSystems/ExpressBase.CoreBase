@@ -391,6 +391,7 @@ namespace ExpressBase.CoreBase.Globals
         public FG_Review_Stage currentStage { get; private set; }
 
         public string _ReviewStatus { get; private set; }
+        public FG_Review_Stage _Stage { get; private set; }
         public string _Action { get; private set; }
         public string _Comments { get; private set; }
 
@@ -415,9 +416,10 @@ namespace ExpressBase.CoreBase.Globals
 
         }
 
-        public void complete(string action, string comments)
+        public void complete(FG_Review_Stage stage, string action, string comments)
         {
             this._ReviewStatus = "AutoCompleted";
+            this._Stage = stage;
             this._Action = action;
             this._Comments = comments;
         }
