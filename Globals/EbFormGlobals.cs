@@ -391,6 +391,8 @@ namespace ExpressBase.CoreBase.Globals
         public FG_Review_Stage currentStage { get; private set; }
 
         public string _ReviewStatus { get; private set; }
+        public string _Action { get; private set; }
+        public string _Comments { get; private set; }
 
         public FG_Review(Dictionary<string, FG_Review_Stage> stages, FG_Review_Stage currentStage)
         {
@@ -413,6 +415,12 @@ namespace ExpressBase.CoreBase.Globals
 
         }
 
+        public void complete(string action, string comments)
+        {
+            this._ReviewStatus = "AutoCompleted";
+            this._Action = action;
+            this._Comments = comments;
+        }
     }
 
     public class FG_Review_Stage
