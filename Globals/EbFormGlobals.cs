@@ -102,11 +102,13 @@ namespace ExpressBase.CoreBase.Globals
     {
         public List<FG_Notification> Notifications { get; set; }
         public List<FG_EmailNotification> EmailNotifications { get; set; }
+        public List<FG_Notification> PushNotifications { get; set; }
 
         public FG_System()
         {
             this.Notifications = new List<FG_Notification>();
             this.EmailNotifications = new List<FG_EmailNotification>();
+            this.PushNotifications = new List<FG_Notification>();
         }
 
         public void sendNotificationByUserId(int userId, string title = null)
@@ -129,6 +131,11 @@ namespace ExpressBase.CoreBase.Globals
             if (!string.IsNullOrWhiteSpace(refId))
                 this.EmailNotifications.Add(new FG_EmailNotification { RefId = refId });
         }
+
+        public void sendPushNotificationByUserId(int userId, string title, string message)
+        {
+            this.PushNotifications.Add(new FG_Notification { UserId = userId, Title = title, Message = message, NotifyBy = FG_NotifyBy.UserId });
+        }
     }
 
     public class FG_Notification
@@ -140,6 +147,8 @@ namespace ExpressBase.CoreBase.Globals
         public List<int> UserGroupIds { get; set; }
 
         public string Title { get; set; }
+
+        public string Message { get; set; }
 
         public FG_NotifyBy NotifyBy { get; set; }
     }
