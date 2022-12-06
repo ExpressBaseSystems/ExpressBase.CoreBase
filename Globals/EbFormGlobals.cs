@@ -63,7 +63,7 @@ namespace ExpressBase.CoreBase.Globals
             out_dict = new Dictionary<int, object[]>();
         }
 
-        public void AddToOutDict(Dictionary<int, object[]> out_dict, int key, object value, object curItem)
+        public void AddToOutDict(int key, object value, object curItem)
         {
             if (curItem is FG_Control fgCtrl)
                 fgCtrl.setValue(value);
@@ -71,7 +71,7 @@ namespace ExpressBase.CoreBase.Globals
             out_dict.Add(key, new object[] { 1, value });
         }
 
-        public void AddToOutDict(Dictionary<int, object[]> out_dict, int key, Exception e)
+        public void AddToOutDict(int key, Exception e)
         {
             out_dict.Add(key, new object[] { 2, e.Message });
         }
