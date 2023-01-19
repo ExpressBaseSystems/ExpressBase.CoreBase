@@ -571,7 +571,7 @@ namespace ExpressBase.CoreBase.Globals
         public string replacePrefixWith(string prefix)
         {
             string st = Convert.ToString(this.Value);
-            if (st == FG_Constants.AutoId_PlaceHolder)
+            if (st.Contains(FG_Constants.AutoId_PlaceHolder))
             {
                 st = prefix + FG_Constants.AutoId_SerialNo_PlaceHolder;
                 return st;
