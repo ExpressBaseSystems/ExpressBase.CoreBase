@@ -56,6 +56,13 @@ namespace ExpressBase.CoreBase.Globals
             this.parameters = fG_Params;
         }
 
+        public string getNewAutoIdUsingPrefix(string prefix)
+        {
+            if (string.IsNullOrWhiteSpace(prefix))
+                throw new Exception($"Invalid argument passed to getNewAutoIdUsingPrefix fn;");
+            return FG_Constants.AutoId_Prefix_PlaceHolder + prefix;
+        }
+
         #region ScriptFunctions
 
         public void InitOutputDict()
@@ -677,7 +684,7 @@ namespace ExpressBase.CoreBase.Globals
         public const string DataId_PlaceHolder = "__DataId_PlaceHolder__";
         public const string AutoId_PlaceHolder = "__EbAutoId_PlaceHolder__";
         public const string AutoId_SerialNo_PlaceHolder = "__EbAutoId_SerialNo_PlaceHolder__";
-        public const string AutoId_Full_PlaceHolder = "__EbAutoId_Full_PlaceHolder__";
+        public const string AutoId_Prefix_PlaceHolder = "__EbAutoId_Prefix_PlaceHolder__";
 
         //Object Types
         //public const string AutoId = "AutoId";
