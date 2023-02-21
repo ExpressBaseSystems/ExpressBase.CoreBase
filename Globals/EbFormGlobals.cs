@@ -26,6 +26,8 @@ namespace ExpressBase.CoreBase.Globals
 
         public List<FG_WebForm> DestinationForms { get; set; }
 
+        public List<FG_WebForm> BatchDestinationForms { get; set; }
+
         public Dictionary<int, object[]> out_dict { get; set; }
 
         public FG_Root(FG_WebForm fG_WebForm)
