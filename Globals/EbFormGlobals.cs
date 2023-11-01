@@ -243,6 +243,8 @@ namespace ExpressBase.CoreBase.Globals
 
         public int eb_loc_id { get; private set; }
 
+        public string eb_current_language_code { get; private set; }
+
         public string eb_ref_id { get; private set; }
 
         public int eb_created_by { get; private set; }
@@ -253,7 +255,7 @@ namespace ExpressBase.CoreBase.Globals
 
         public dynamic id { get; private set; }
 
-        public FG_WebForm(string masterTbl, int dataId, int locId, string refId, int createdBy, string createdAt)
+        public FG_WebForm(string masterTbl, int dataId, int locId, string refId, int createdBy, string createdAt, string langCode)
         {
             this.MasterTable = masterTbl;
             if (dataId > 0)
@@ -264,6 +266,7 @@ namespace ExpressBase.CoreBase.Globals
             this.eb_ref_id = refId;
             this.eb_created_by = createdBy;
             this.eb_created_at = createdAt;
+            this.eb_current_language_code = langCode;
             this.__mode = dataId > 0 ? "edit" : "new";
 
             this.FlatCtrls = new FG_Row();
