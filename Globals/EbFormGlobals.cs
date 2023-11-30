@@ -328,6 +328,12 @@ namespace ExpressBase.CoreBase.Globals
 
         public FG_Row currentRow { get; set; }
 
+        private List<object> GroupValues { get; set; }
+
+        private string CurrentGroupName { get; set; }
+
+        private int CurrentGroupIndex { get; set; }
+
         public FG_DataGrid(string name, List<FG_Row> rows, FG_Row rowModel)
         {
             this.Name = name;
@@ -354,7 +360,12 @@ namespace ExpressBase.CoreBase.Globals
             if (this.Rows.Count > 0)
             {
                 if (this.currentRow == null)
+                {
                     this.currentRow = this.Rows[0];
+                    this.GroupValues = null;
+                    this.CurrentGroupName = null;
+                    this.CurrentGroupIndex = 0;
+                }
                 else
                 {
                     int index = this.Rows.FindIndex(e => e == this.currentRow);
@@ -375,10 +386,58 @@ namespace ExpressBase.CoreBase.Globals
             return 0;
         }
 
+        public int GroupBy(string cname)
+        {
+            if (this.GroupValues == null || this.CurrentGroupName != cname)
+            {
+                this.CurrentGroupName = cname;
+                this.CurrentGroupIndex = 0;
+                this.GroupValues = new List<object>();
+                foreach (FG_Row Row in this.Rows)
+                {
+                    object t = Row[cname]?.getValue();
+                    if (t != null && !this.GroupValues.Contains(t))
+                    {
+                        this.GroupValues.Add(t);
+                    }
+                }
+            }
+            else
+            {
+                this.CurrentGroupIndex++;
+                if (this.CurrentGroupIndex == this.GroupValues.Count)
+                    this.CurrentGroupIndex = 0;
+            }
+            return this.CurrentGroupIndex;
+        }
+
+        public object GetGroupByColumnValue()
+        {
+            if (this.GroupValues != null && this.CurrentGroupIndex < this.GroupValues.Count)
+                return this.GroupValues[this.CurrentGroupIndex];
+            return null;
+        }
+
+        private List<FG_Row> GetRows()
+        {
+            List<FG_Row> rows;
+            if (this.CurrentGroupName != null && this.GroupValues != null)
+            {
+                object val = this.GroupValues[this.CurrentGroupIndex];
+                rows = this.Rows.FindAll(e => Convert.ToString(e[this.CurrentGroupName].getValue()) == Convert.ToString(val));
+            }
+            else
+            {
+                rows = this.Rows;
+            }
+            return rows;
+        }
+
         public Double Sum(string cname)
         {
             Double s = 0;
-            foreach (FG_Row Row in this.Rows)
+
+            foreach (FG_Row Row in this.GetRows())
             {
                 if (Row[cname] != null)
                 {
@@ -391,7 +450,7 @@ namespace ExpressBase.CoreBase.Globals
         public Double Avg(string cname)
         {
             Double s = 0;
-            foreach (FG_Row Row in this.Rows)
+            foreach (FG_Row Row in this.GetRows())
             {
                 if (Row[cname] != null)
                 {
@@ -404,9 +463,10 @@ namespace ExpressBase.CoreBase.Globals
         public Double Min(string cname)
         {
             Double s = 0;
-            if (this.Rows.Count > 0)
-                double.TryParse(Convert.ToString(this.Rows[0][cname].getValue()), out s);
-            foreach (FG_Row Row in this.Rows)
+            List<FG_Row> rows = this.GetRows();
+            if (rows.Count > 0)
+                double.TryParse(Convert.ToString(rows[0][cname].getValue()), out s);
+            foreach (FG_Row Row in rows)
             {
                 if (Row[cname] != null)
                 {
@@ -420,9 +480,10 @@ namespace ExpressBase.CoreBase.Globals
         public Double Max(string cname)
         {
             Double s = 0;
-            if (this.Rows.Count > 0)
-                double.TryParse(Convert.ToString(this.Rows[0][cname].getValue()), out s);
-            foreach (FG_Row Row in this.Rows)
+            List<FG_Row> rows = this.GetRows();
+            if (rows.Count > 0)
+                double.TryParse(Convert.ToString(rows[0][cname].getValue()), out s);
+            foreach (FG_Row Row in rows)
             {
                 if (Row[cname] != null)
                 {
