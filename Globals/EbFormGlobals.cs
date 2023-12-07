@@ -494,6 +494,30 @@ namespace ExpressBase.CoreBase.Globals
             }
             return s;
         }
+
+        public object First(string cname)
+        {
+            List<FG_Row> rows = this.GetRows();
+            if (rows.Count > 0)
+                return rows[0][cname].getValue();
+            return null;
+        }
+
+        public string Concat(string cname, string separator = ",")
+        {
+            List<string> s = new List<string>();
+            List<FG_Row> rows = this.GetRows();
+            foreach (FG_Row Row in rows)
+            {
+                if (Row[cname] != null)
+                {
+                    string _s = Convert.ToString(Row[cname].getValue());
+                    if (!string.IsNullOrWhiteSpace(_s))
+                        s.Add(_s);
+                }
+            }
+            return string.Join(separator, s);
+        }
     }
 
     public class FG_Review
